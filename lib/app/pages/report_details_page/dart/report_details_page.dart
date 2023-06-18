@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:sep_app_web/app/pages/appointment_details_page/dart/widgets/info_card.dart';
 import 'package:sep_app_web/app/pages/report_details_page/dart/report_details_page_view_model.dart';
+import 'package:sep_app_web/app/shared/modals/add_feedback_modal/add_feedback_modal.dart';
+import 'package:sep_app_web/app/shared/modals/add_feedback_modal/add_feedback_modal_view_model.dart';
 import 'package:sep_app_web/app/shared/sep_app_bar_links.dart';
 import 'package:sep_app_web/app/shared/sep_app_scaffold/sep_app_scaffold.dart';
 import 'package:sep_app_web/app/shared/widgets/sep_divider/sep_divider.dart';
@@ -268,12 +271,12 @@ class _ReportDetailsPageState extends State<ReportDetailsPage> {
   Widget _addFeedbackButton() {
     return MaterialButton(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 40),
-      onPressed: () {},
+      onPressed: _openModal,
       color: Colors.green,
       child: const Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          FaIcon(FontAwesomeIcons.comment, color: Colors.white, size: 15),
+          FaIcon(FontAwesomeIcons.commentDots, color: Colors.white, size: 15),
           SizedBox(width: 10),
           Text(
             "Yorum Ekle",
@@ -285,5 +288,22 @@ class _ReportDetailsPageState extends State<ReportDetailsPage> {
         ],
       ),
     );
+  }
+
+  void _openModal() {
+    showBarModalBottomSheet(
+      context: context,
+      builder: (newContext) {
+        return ChangeNotifierProvider(
+          create: (context) => AddFeedbackModalViewModel(),
+          child: AddFeedbackModal(reportId: widget.reportId),
+          builder: (context, child) {
+            return child!;
+          },
+        );
+      },
+    ).then((value) {
+      context.read<ReportDetailsPageViewModel>().getReport(widget.reportId);
+    });
   }
 }

@@ -25,4 +25,9 @@ class ReportsRepository extends ReportsDbServiceBase {
   Future<bool> updateReport(String reportId, ReportModel updatedVersion) {
     return _service.updateReport(reportId, updatedVersion);
   }
+
+  @override
+  Future<bool> addDoctorFeedback(String reportId, String feedback) {
+    return _service.addDoctorFeedback(reportId, feedback);
+  }
 }

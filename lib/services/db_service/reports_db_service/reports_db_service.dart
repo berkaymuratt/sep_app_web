@@ -115,4 +115,31 @@ class ReportsDbService extends ReportsDbServiceBase {
     // TODO: implement updateReport
     throw UnimplementedError();
   }
+
+  @override
+  Future<bool> addDoctorFeedback(String reportId, String feedback) async {
+    try {
+      final response = await dio.post(
+          'http://localhost:8080/api/reports/$reportId',
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json; charset=UTF-8',
+              'jwt': locator<JwtManager>().jwtToken,
+            },
+          ),
+          queryParameters: {"feedback": feedback}
+      );
+
+      return true;
+    } on DioError catch (e) {
+      if (e.response != null) {
+        if (e.response!.statusCode == 401) {
+          locator<JwtManager>().clearToken();
+        }
+        throw Exception(e.response!.data['message']);
+      } else {
+        throw Exception("Bir hata oluştu");
+      }
+    }
+  }
 }
